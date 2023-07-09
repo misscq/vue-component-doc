@@ -72,134 +72,98 @@
   </section>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, inject, onMounted, ref } from "vue";
-import {
-  CheckOutlined,
-  SnippetsOutlined,
-  // CodeSandboxOutlined,
-} from "@ant-design/icons-vue";
+<script lang="ts" setup name="DemoBox">
+import { computed, inject, onMounted, ref } from "vue";
+// import {
+//   CheckOutlined,
+//   SnippetsOutlined,
+//   // CodeSandboxOutlined,
+// } from "@ant-design/icons-vue";
 // import { getCodeSandboxParams } from "../utils/generateOnlineDemo";
+const props = defineProps({
+  jsfiddle: Object,
+});
 
-export default defineComponent({
-  name: "DemoBox",
-  components: {
-    CheckOutlined,
-    SnippetsOutlined,
-    // CodeSandboxOutlined,
-  },
-  props: {
-    jsfiddle: Object,
-  },
-  setup(props) {
-    const codeExpand = ref(false);
-    const type = ref("TS");
+const codeExpand = ref(false);
+const type = ref("TS");
 
-    const copyTooltipVisible = ref(false);
-    const copied = ref(false);
-    const codeRef = ref<HTMLDivElement>();
-    const sectionId = computed(() => {
-      const relativePath = props.jsfiddle?.relativePath || "";
-      return `${relativePath
-        .split("/")
-        .slice(1)
-        .join("-")
-        .replace(".vue", "")}`;
-    });
-    const iframeHeight = computed(() => props.jsfiddle?.iframe);
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const addDemosInfo: any = inject("addDemosInfo", () => {});
+const copyTooltipVisible = ref(false);
+const copied = ref(false);
+const codeRef = ref<HTMLDivElement>();
+const sectionId = computed(() => {
+  const relativePath = props.jsfiddle?.relativePath || "";
+  return `${relativePath.split("/").slice(1).join("-").replace(".vue", "")}`;
+});
+const iframeHeight = computed(() => props.jsfiddle?.iframe);
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const addDemosInfo: any = inject("addDemosInfo", () => {});
 
-    const title = computed(
-      () =>
-        props.jsfiddle && props.jsfiddle.title && props.jsfiddle?.title["zh-CN"]
-    );
-    const iframeDemoKey = computed(() => {
-      return (
-        props.jsfiddle &&
-        props.jsfiddle.title &&
-        props.jsfiddle?.title["en-US"] &&
-        String(props.jsfiddle?.title["en-US"])
-          .split(" ")
-          .join("-")
-          .toLowerCase()
-      );
-    });
-    const onCopyTooltipVisibleChange = (visible: boolean) => {
-      if (visible) {
-        copyTooltipVisible.value = visible;
-        copied.value = false;
-      } else {
-        copyTooltipVisible.value = visible;
-      }
-    };
-    const docHtml = computed(() =>
-      props.jsfiddle && props.jsfiddle.docHtml
-        ? (
-            props.jsfiddle.docHtml.replace(
-              `<h2 id="zh-CN">zh-CN <a class="header-anchor" href="#zh-CN">
+const title = computed(
+  () => props.jsfiddle && props.jsfiddle.title && props.jsfiddle?.title["zh-CN"]
+);
+const iframeDemoKey = computed(() => {
+  return (
+    props.jsfiddle &&
+    props.jsfiddle.title &&
+    props.jsfiddle?.title["en-US"] &&
+    String(props.jsfiddle?.title["en-US"]).split(" ").join("-").toLowerCase()
+  );
+});
+const onCopyTooltipVisibleChange = (visible: boolean) => {
+  if (visible) {
+    copyTooltipVisible.value = visible;
+    copied.value = false;
+  } else {
+    copyTooltipVisible.value = visible;
+  }
+};
+const docHtml = computed(() =>
+  props.jsfiddle && props.jsfiddle.docHtml
+    ? (
+        props.jsfiddle.docHtml.replace(
+          `<h2 id="zh-CN">zh-CN <a class="header-anchor" href="#zh-CN">
           <span aria-hidden="true" class="anchor">#</span>
         </a></h2>`,
-              ""
-            )
-              .split(`<h2 id="en-US">en-US <a class="header-anchor" href="#en-US">
+          ""
+        ).split(`<h2 id="en-US">en-US <a class="header-anchor" href="#en-US">
           <span aria-hidden="true" class="anchor">#</span>
         </a></h2>`)[0] || ""
-          ).trim()
-        : ""
-    );
-    const handleCodeExpand = () => {
-      codeExpand.value = !codeExpand.value;
-    };
-    const handleCodeCopied = () => {
-      copied.value = true;
-    };
-    const handleChangeType = () => {
-      type.value = type.value === "TS" ? "JS" : "TS";
-    };
-    const highlightClass = computed(() => {
-      return {
-        "highlight-wrapper": true,
-        "highlight-wrapper-expand": codeExpand.value,
-      };
-    });
-    const iframeDemo = inject("iframeDemo", {});
-    onMounted(() => {
-      addDemosInfo({
-        href: `#${sectionId.value}`,
-        title,
-      });
-    });
-    const theme = computed(
-      () => inject("themeMode", { theme: ref("default") }).theme.value
-    );
-    return {
-      docHtml,
-      iframeDemo,
-      iframeDemoKey,
-      iframeHeight,
-      theme,
-      type,
-      sectionId,
-      title,
-      codeExpand,
-      copyTooltipVisible,
-      copied,
-      onCopyTooltipVisibleChange,
-      handleCodeExpand,
-      handleCodeCopied,
-      handleChangeType,
-      highlightClass,
-      sourceCode: decodeURIComponent(
-        escape(window.atob(props.jsfiddle?.sourceCode))
-      ),
-      jsSourceCode: decodeURIComponent(
-        escape(window.atob(props.jsfiddle?.jsSourceCode))
-      ),
-      codeRef,
-    };
-  },
+      ).trim()
+    : ""
+);
+const handleCodeExpand = () => {
+  codeExpand.value = !codeExpand.value;
+};
+const handleCodeCopied = () => {
+  copied.value = true;
+};
+const handleChangeType = () => {
+  type.value = type.value === "TS" ? "JS" : "TS";
+};
+const highlightClass = computed(() => {
+  return {
+    "highlight-wrapper": true,
+    "highlight-wrapper-expand": codeExpand.value,
+  };
 });
+const iframeDemo = inject("iframeDemo", {});
+onMounted(() => {
+  addDemosInfo({
+    href: `#${sectionId.value}`,
+    title,
+  });
+});
+const theme = computed(
+  () => inject("themeMode", { theme: ref("default") }).theme.value
+);
+
+const sourceCode = decodeURIComponent(
+  escape(window.atob(props.jsfiddle?.sourceCode))
+);
+
+const jsSourceCode = decodeURIComponent(
+  escape(window.atob(props.jsfiddle?.jsSourceCode))
+);
 </script>
 
 <style lang="less" scoped>

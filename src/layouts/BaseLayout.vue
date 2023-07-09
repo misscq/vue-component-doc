@@ -8,22 +8,18 @@
   </div>
 </template>
 
-<script>
-import Header from '../components/header';
-import Footer from './Footer.vue';
-import NProgress from 'nprogress';
-export default {
-  components: {
-    HeaderCom: Header,
-    FooterCom: Footer,
-  },
-  props: ['name'],
-  beforeCreate() {},
-  methods: {
-    mountedCallback() {
-      NProgress.done();
-      document.documentElement.scrollTop = 0;
-    },
-  },
-};
+<script lang="ts" setup name="BaseLayout">
+// import Header from "../components/header";
+// import Footer from "./Footer.vue";
+// import NProgress from "nprogress";
+
+defineProps({
+  name: String,
+});
+mountedCallback();
+
+function mountedCallback() {
+  // NProgress?.done();
+  document.documentElement.scrollTop = 0;
+}
 </script>

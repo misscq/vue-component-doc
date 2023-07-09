@@ -48,17 +48,15 @@
     </router-link>
   </section>
 </template>
-<script lang="ts">
+<script lang="ts" setup name="PrevAndNext">
 import { computed, defineComponent } from "vue";
-export default defineComponent({
-  name: "PrevAndNext",
-  props: ["menus", "isZhCN", "currentMenuIndex"],
-  setup(props) {
-    return {
-      prev: computed(() => props.menus[props.currentMenuIndex - 1]),
-      next: computed(() => props.menus[props.currentMenuIndex + 1]),
-    };
-  },
+
+const props = defineProps({
+  menus: <any>[],
+  isZhCN: String,
+  currentMenuIndex: { type: Number, default: 0 },
 });
+const prev = computed(() => props.menus[props.currentMenuIndex - 1]);
+const next = computed(() => props.menus[props.currentMenuIndex + 1]);
 </script>
 <style lang="less" scoped></style>

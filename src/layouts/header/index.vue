@@ -21,24 +21,15 @@
   </header>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script lang="ts" setup>
+import { ref } from "vue";
 import SearchBox from "./SearchBox.vue";
 import Menu from "./Menu.vue";
 
-export default defineComponent({
-  components: {
-    SearchBox,
-    Menu,
-  },
-  setup() {
-    const searching = ref(false);
-    const onTriggerSearching = (value: boolean) => {
-      searching.value = value;
-    };
-    return { onTriggerSearching };
-  },
-});
+const searching = ref(false);
+const onTriggerSearching = (value: boolean) => {
+  searching.value = value;
+};
 </script>
 
 <style lang="less" scoped>

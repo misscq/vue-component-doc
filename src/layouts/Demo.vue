@@ -14,26 +14,25 @@
     <section class="markdown api-container" v-html="api"></section>
   </article>
 </template>
-<script lang="ts">
-import { defineComponent, computed } from "vue";
+<script lang="ts" setup name="Demo">
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 
-export default defineComponent({
-  name: "Demo",
-  props: ["pageData"],
-  setup(props) {
-    const route = useRoute();
-    const frontmatter = computed(() => props?.pageData?.frontmatter || {});
-    const docHtml = computed(() => {
-      return props?.pageData?.html || "";
-    });
-    const description = computed(() => {
-      return docHtml.value.split(
-        '<h2 id="API">API <a class="header-anchor" href="#API">'
-      )[0];
-    });
-    const api = computed(() => {
-      return `
+const props = defineProps({
+  pageData: Object,
+});
+const route = useRoute();
+const frontmatter = computed(() => props?.pageData?.frontmatter || {});
+const docHtml = computed(() => {
+  return props?.pageData?.html || "";
+});
+const description = computed(() => {
+  return docHtml.value.split(
+    '<h2 id="API">API <a class="header-anchor" href="#API">'
+  )[0];
+});
+const api = computed(() => {
+  return `
       <h2 id="API"><span>API</span><a href="#API" class="anchor">#</a></h2>
       ${
         docHtml.value.split(
@@ -41,9 +40,6 @@ export default defineComponent({
         )[1]
       }
       `;
-    });
-    return { frontmatter, description, api, route, docHtml };
-  },
 });
 </script>
 <style lang="less" scoped>

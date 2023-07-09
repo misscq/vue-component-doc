@@ -13,40 +13,29 @@
     </a-menu-item>
   </a-menu>
 </template>
-<script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+<script lang="ts" setup name="HeaderMenu">
+import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
-export default defineComponent({
-  name: "HeaderMenu",
-  components: {},
-  setup() {
-    const route = useRoute();
-    const activeMenuItem = ref("home");
-    watch(
-      () => route.path,
-      (pathname) => {
-        const modules = pathname.split("/");
-        if (
-          pathname === "/docs/resources" ||
-          pathname === "/docs/resources-cn"
-        ) {
-          activeMenuItem.value = "docs/resources";
-        } else if (modules[1] === "components") {
-          activeMenuItem.value = "components";
-        } else if (modules[1] === "docs") {
-          activeMenuItem.value = `${modules[1]}/${modules[2]}`;
-        } else {
-          activeMenuItem.value = "home";
-        }
-      },
-      // eslint-disable-next-line comma-dangle
-      { immediate: true }
-    );
-    return {
-      activeMenuItem,
-    };
+
+const route = useRoute();
+const activeMenuItem = ref("home");
+watch(
+  () => route.path,
+  (pathname) => {
+    const modules = pathname.split("/");
+    if (pathname === "/docs/resources" || pathname === "/docs/resources-cn") {
+      activeMenuItem.value = "docs/resources";
+    } else if (modules[1] === "components") {
+      activeMenuItem.value = "components";
+    } else if (modules[1] === "docs") {
+      activeMenuItem.value = `${modules[1]}/${modules[2]}`;
+    } else {
+      activeMenuItem.value = "home";
+    }
   },
-});
+  // eslint-disable-next-line comma-dangle
+  { immediate: true }
+);
 </script>
 <style lang="less" scoped>
 .nav {

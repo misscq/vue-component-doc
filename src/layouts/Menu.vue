@@ -38,49 +38,45 @@
     </template>
   </a-menu>
 </template>
-<script lang="ts">
-import { computed, defineComponent, watch } from "vue";
+<script lang="ts" setup name="Menu">
+import { computed, watch } from "vue";
 import { useRoute } from "vue-router";
-export default defineComponent({
-  name: "Menu",
-  props: ["menus", "activeMenuItem"],
-  setup(props) {
-    const route = useRoute();
-    const showOverview = computed(() => {
-      return route.path.indexOf("/components") === 0;
-    });
-    watch(
-      [() => props.activeMenuItem, () => props.menus],
-      () => {
-        const menus = props.menus.reduce(
-          (pre: any, current: { children: any }) => [
-            ...pre,
-            current,
-            ...(current.children || []),
-          ],
-          [
-            {
-              path: "/components/overview",
-              title: "组件总览",
-              enTitle: "Components Overview",
-            },
-          ]
-        );
-        const item = menus.find(
-          (m: { path: any }) => m.path === props.activeMenuItem
-        );
-        let title = "";
-        if (item && item.title) {
-          title = `${item.subtitle || ""} ${item.title}`;
-        }
-        document.title = title.trim();
-      },
-      { immediate: true, flush: "post" }
-    );
-    return {
-      showOverview,
-    };
-  },
+
+const props = defineProps({
+  menus: <any>[],
+  activeMenuItem: { type: String, default: "" },
 });
+const route = useRoute();
+const showOverview = computed(() => {
+  return route.path.indexOf("/components") === 0;
+});
+watch(
+  [() => props.activeMenuItem, () => props.menus],
+  () => {
+    const menus = props.menus.reduce(
+      (pre: any, current: { children: any }) => [
+        ...pre,
+        current,
+        ...(current.children || []),
+      ],
+      [
+        {
+          path: "/components/overview",
+          title: "组件总览",
+          enTitle: "Components Overview",
+        },
+      ]
+    );
+    const item = menus.find(
+      (m: { path: any }) => m.path === props.activeMenuItem
+    );
+    let title = "";
+    if (item && item.title) {
+      title = `${item.subtitle || ""} ${item.title}`;
+    }
+    document.title = title.trim();
+  },
+  { immediate: true, flush: "post" }
+);
 </script>
 <style lang="less" scoped></style>

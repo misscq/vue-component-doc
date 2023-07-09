@@ -17,9 +17,13 @@
   </div>
 </template>
 
-<script>
-import marked from "marked";
+<script lang="ts" setup name="DemoContainer">
+import { marked } from "marked";
 import Prism from "prismjs";
+
+const props = defineProps({
+  code: String,
+});
 const replaceDelimiters = function (str) {
   return str.replace(/({{|}})/g, "<span>$1</span>");
 };
@@ -60,26 +64,16 @@ marked.setOptions({
 });
 const cnReg = /<cn>([\S\s\t]*?)<\/cn>/;
 const usReg = /<us>([\S\s\t]*?)<\/us>/;
-export default {
-  name: "DemoContainer",
-  props: ["code"],
-  data() {
-    const cn = this.code.match(cnReg) || [];
-    const us = this.code.match(usReg) || [];
-    const cnHtml = marked(cn[1].trim());
-    const usHtml = marked(us[1].trim());
-    const sourceCode = this.code.replace(cn[0], "").replace(us[0], "").trim();
-    const codeHtml = marked("```html\n" + sourceCode + "```");
-    return {
-      codeStr: window.btoa(unescape(encodeURIComponent(codeHtml))),
-      cnHtml,
-      usHtml,
-      jsfiddle: {
-        sourceCode: window.btoa(unescape(encodeURIComponent(sourceCode))),
-        cn: cn[1].trim(),
-        us: us[1].trim(),
-      },
-    };
-  },
+const cn = this.code.match(cnReg) || [];
+const us = this.code.match(usReg) || [];
+const cnHtml = marked(cn[1].trim());
+const usHtml = marked(us[1].trim());
+const sourceCode = this.code.replace(cn[0], "").replace(us[0], "").trim();
+const codeHtml = marked("```html\n" + sourceCode + "```");
+const codeStr = window.btoa(unescape(encodeURIComponent(codeHtml)));
+const jsfiddle = {
+  sourceCode: window.btoa(unescape(encodeURIComponent(sourceCode))),
+  cn: cn[1].trim(),
+  us: us[1].trim(),
 };
 </script>

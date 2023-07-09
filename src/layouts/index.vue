@@ -38,8 +38,8 @@
   </div>
 </template>
 
-<script script lang="ts">
-import { defineComponent, ref, computed, provide, watch } from "vue";
+<script lang="ts" setup name="Layout">
+import { ref, computed, provide, watch } from "vue";
 import { useRoute } from "vue-router";
 
 import Header from "./header/index.vue";
@@ -55,108 +55,83 @@ import useMenus from "../hooks/useMenus";
 const rControl = /[\u0000-\u001f]/g;
 const rSpecial = /[\s~`!@#$%^&*()\-_+=[\]{}|\\;:"'<>,.?/]+/g;
 
-export default defineComponent({
-  name: "Layout",
-  components: {
-    Demo,
-    Header,
-    Menu,
-    PrevAndNext,
-    LinkOutlined,
-    Box,
-  },
-  setup() {
-    const visible = ref(false);
-    const route = useRoute();
-    const { menus, activeMenuItem, currentMenuIndex, dataSource } = useMenus();
-    console.log("dataSource", dataSource);
+const visible = ref(false);
+const route = useRoute();
+const { menus, activeMenuItem, currentMenuIndex, dataSource } = useMenus();
+console.log("dataSource", dataSource);
 
-    const demos = ref<any[]>([]);
-    provide("addDemosInfo", (info: any) => {
-      if (!demos.value.find((d) => d.href === info.href)) {
-        console.log(info.href);
-        demos.value.push(info);
-      }
-    });
-
-    watch(
-      () => route.path,
-      () => {
-        demos.value.length = 0;
-      }
-    );
-
-    const isDemo = computed(() => {
-      return (
-        route.path.indexOf("/components") === 0 &&
-        route.path.indexOf("/components/overview") !== 0
-      );
-    });
-    const matchCom = computed(() => {
-      console.log("route", route);
-      return route.matched[route.matched.length - 1]?.components?.default;
-    });
-    console.log("matchCom", matchCom);
-    const isZhCN = ref(true);
-    const pageData = computed(() =>
-      isDemo.value
-        ? (matchCom.value as any)["CN"]?.pageData
-        : (matchCom.value as any)?.pageData
-    );
-    const headers = computed(() => {
-      let tempHeaders = (pageData.value?.headers || []).filter(
-        (h: Header) => h.level === 2
-      );
-      if (isDemo.value) {
-        tempHeaders = [...demos.value];
-        tempHeaders.push({ title: "API", href: "#API" });
-      }
-      return tempHeaders;
-    });
-    const mainContainerClass = computed(() => {
-      return {
-        "main-container": true,
-        "main-container-component": isDemo.value,
-      };
-    });
-    const handleClickShowButton = () => {
-      visible.value = !visible.value;
-    };
-    return {
-      slugifyTitle: (str: string) => {
-        return (
-          str
-            // Remove control characters
-            .replace(rControl, "")
-            // Replace special characters
-            .replace(rSpecial, "-")
-            // Remove continuos separators
-            .replace(/\-{2,}/g, "-")
-            // Remove prefixing and trailing separtors
-            .replace(/^\-+|\-+$/g, "")
-            // ensure it doesn't start with a number (#121)
-            .replace(/^(\d)/, "_$1")
-        );
-      },
-      visible,
-      isZhCN,
-      mainContainerClass,
-      menus,
-      currentMenuIndex,
-      activeMenuItem,
-      isDemo,
-      matchCom,
-      pageData,
-      dataSource,
-      headers,
-      handleClickShowButton,
-      iconStyle: {
-        // color: '#fff',
-        fontSize: "20px",
-      },
-    };
-  },
+const demos = ref<any[]>([]);
+provide("addDemosInfo", (info: any) => {
+  if (!demos.value.find((d) => d.href === info.href)) {
+    console.log(info.href);
+    demos.value.push(info);
+  }
 });
+
+watch(
+  () => route.path,
+  () => {
+    demos.value.length = 0;
+  }
+);
+
+const isDemo = computed(() => {
+  return (
+    route.path.indexOf("/components") === 0 &&
+    route.path.indexOf("/components/overview") !== 0
+  );
+});
+const matchCom = computed(() => {
+  console.log("route", route);
+  return route.matched[route.matched.length - 1]?.components?.default;
+});
+console.log("matchCom", matchCom);
+const isZhCN = ref(true);
+const pageData = computed(() =>
+  isDemo.value
+    ? (matchCom.value as any)["CN"]?.pageData
+    : (matchCom.value as any)?.pageData
+);
+const headers = computed(() => {
+  let tempHeaders = (pageData.value?.headers || []).filter(
+    (h: Header) => h.level === 2
+  );
+  if (isDemo.value) {
+    tempHeaders = [...demos.value];
+    tempHeaders.push({ title: "API", href: "#API" });
+  }
+  return tempHeaders;
+});
+const mainContainerClass = computed(() => {
+  return {
+    "main-container": true,
+    "main-container-component": isDemo.value,
+  };
+});
+const handleClickShowButton = () => {
+  visible.value = !visible.value;
+};
+
+const slugifyTitle = (str: string) => {
+  return (
+    str
+      // Remove control characters
+      .replace(rControl, "")
+      // Replace special characters
+      .replace(rSpecial, "-")
+      // Remove continuos separators
+      .replace(/\-{2,}/g, "-")
+      // Remove prefixing and trailing separtors
+      .replace(/^\-+|\-+$/g, "")
+      // ensure it doesn't start with a number (#121)
+      .replace(/^(\d)/, "_$1")
+  );
+};
+
+const iconStyle = {
+  // color: '#fff',
+  fontSize: "20px",
+};
 </script>
 
 <style lang="less" scoped>
@@ -217,5 +192,7 @@ export default defineComponent({
   overflow: hidden;
   font-size: 14px;
   border-top: 1px solid #ebedf0;
+  height: 42px;
+  line-height: 42px;
 }
 </style>
